@@ -106,16 +106,31 @@ export default function Login() {
             />
           </motion.div>
 
+          {/* Hiển thị lỗi */}
+          {error && (
+            <motion.p
+              className="text-red-500 text-center font-medium mb-4"
+              variants={inputVariants}
+            >
+              {error}
+            </motion.p>
+          )}
+
           {/* Submit Button */}
           <motion.button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+            disabled={loading}
+            className={`w-full py-3 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+            } text-white font-semibold rounded-lg shadow-lg transition-all duration-300`}
             variants={inputVariants}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: !loading ? 1.02 : 1 }}
+            whileTap={{ scale: !loading ? 0.98 : 1 }}
           >
-            Đăng Nhập
-            <ArrowRight className="ml-2 inline" size={20} />
+            {loading ? "Đang đăng nhập..." : "Đăng Nhập"}
+            {!loading && <ArrowRight className="ml-2 inline" size={20} />}
           </motion.button>
         </form>
 

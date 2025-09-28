@@ -31,8 +31,8 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: "Trang chủ" },
-    { href: "/tours/du-lich-trong-nuoc", label: "Tour trong nước" },
-    { href: "/tours/du-lich-quoc-te", label: "Tour quốc tế" },
+    { href: "/categories/du-lich-trong-nuoc", label: "Tour trong nước" },
+    { href: "/categories/du-lich-quoc-te", label: "Tour quốc tế" },
     { href: "/about", label: "Giới thiệu" },
     { href: "/contact", label: "Liên hệ" },
   ];
