@@ -18,6 +18,32 @@ export const login = createAsyncThunk(
   }
 );
 
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (userData: any, thunkAPI) => {
+    try {
+      const state: any = thunkAPI.getState();
+      const token = state.auth.token;
+
+      const res = await fetch("http://localhost:5000/api/auth/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Cập nhật thất bại!");
+
+      return data.user;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 interface AuthState {
   user: any;
   token: string | null;
@@ -26,7 +52,10 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null,
+  user:
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") || "null")
+      : null,
   token: typeof window !== "undefined" ? localStorage.getItem("token") : null,
   loading: false,
   error: null,
@@ -59,6 +88,10 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
       });
   },
 });

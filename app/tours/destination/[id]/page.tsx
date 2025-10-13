@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence, easeOut } from "framer-motion";
+import { motion, easeOut } from "framer-motion";
 import { Tour } from "@/app/types/Tours";
 import { Location } from "@/app/types/Locations";
 import TourCard from "@/app/components/ui/TourCard";
@@ -26,13 +26,12 @@ const cardVariants = {
   },
 };
 
-export default function ToursByCategoryPage() {
-  const { slug } = useParams<{ slug: string }>();
+export default function ToursByDestinationPage() {
+  const params = useParams();
+  const destinationId = params.id;
 
   const [tours, setTours] = useState<Tour[]>([]);
-  const [categoryImage, setCategoryImage] = useState<string>("");
   const [locations, setLocations] = useState<Location[]>([]);
-  const [categoryName, setCategoryName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [selectedPriceRange, setSelectedPriceRange] = useState<{
     min: number;
@@ -43,56 +42,47 @@ export default function ToursByCategoryPage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
+  // Fetch tours theo destination
   useEffect(() => {
-    if (slug) {
-      fetchTours(slug);
-      fetchLocations(slug);
-    }
-  }, [slug]);
-
-  const fetchTours = async (slug: string) => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/tours/fixed-category/${slug}`
-      );
-      const data = await res.json();
-
-      if (data.success && data.data.length > 0) {
-        setTours(data.data);
-        setCategoryName(data.data[0].fixedCategory?.name || "");
-        const imageUrl = data.data[0].fixedCategory?.image
-          ? `http://localhost:5000${data.data[0].fixedCategory.image}`
-          : "/fallback.jpg";
-        setCategoryImage(imageUrl);
+    const fetchTours = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `http://localhost:5000/api/tours/destination/${destinationId}`
+        );
+        const data = await res.json();
+        if (data.success) {
+          setTours(data.data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Lỗi lấy tour:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const fetchLocations = async (slug: string) => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/locations/category/${slug}`
-      );
-      const data = await res.json();
-      if (data.success) setLocations(data.data);
-    } catch (err) {
-      console.error("Lỗi lấy địa điểm:", err);
+    const fetchLocations = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/locations`);
+        const data = await res.json();
+        if (data.success) setLocations(data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (destinationId) {
+      fetchTours();
+      fetchLocations();
     }
-  };
+  }, [destinationId]);
 
   const filteredAndSortedTours = tours
     .filter((tour) => {
-      const price = tour.salePrice
-        ? Number(tour.salePrice)
-        : Number(tour.price);
+      const price = tour.salePrice ? Number(tour.salePrice) : Number(tour.price);
       if (selectedPriceRange) {
-        if (price < selectedPriceRange.min || price > selectedPriceRange.max) {
+        if (price < selectedPriceRange.min || price > selectedPriceRange.max)
           return false;
-        }
       }
       if (selectedLocation && Number(tour.Location?.id) !== selectedLocation)
         return false;
@@ -104,54 +94,43 @@ export default function ToursByCategoryPage() {
       if (sortBy === "priceAsc") return priceA - priceB;
       if (sortBy === "priceDesc") return priceB - priceA;
       if (sortBy === "dateAsc")
-        return (
-          new Date(a.startDate || "").getTime() -
-          new Date(b.startDate || "").getTime()
-        );
+        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       if (sortBy === "dateDesc")
-        return (
-          new Date(b.startDate || "").getTime() -
-          new Date(a.startDate || "").getTime()
-        );
+        return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
       return 0;
     });
 
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-xl text-white animate-pulse">Đang tải tour...</p>
+        <p className="text-xl text-purple-700 animate-pulse">Đang tải tour...</p>
+      </div>
+    );
+
+  if (!tours.length)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-red-600">Không có tour nào cho điểm đến này</p>
       </div>
     );
 
   return (
-    <div className="relative min-h-screen bg-gray-100">
-      {/* Parallax Background with Gradient Overlay */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${categoryImage})`,
-          backgroundAttachment: "fixed",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/70 via-purple-900/60 to-transparent"></div>
-      </div>
-
+    <div className="relative min-h-screen bg-gradient-to-r from-indigo-900 via-purple-800 to-blue-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header */}
         <motion.h1
-          className="text-3xl lg:text-4xl font-extrabold text-center text-white bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-12 drop-shadow-lg"
+          className="text-3xl lg:text-4xl font-extrabold text-center text-white mb-12 drop-shadow-lg"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Khám Phá Tour {categoryName}
+          Tour theo điểm đến
         </motion.h1>
 
-        {/* Sidebar + Content Layout */}
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar */}
           <motion.aside
-            className="lg:w-1/4 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
+            className="lg:w-1/4 max-h-[538px] bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -163,7 +142,7 @@ export default function ToursByCategoryPage() {
               <FaFilter /> Bộ lọc
             </motion.h2>
 
-            {/* Price Range Suggestions */}
+            {/* Price Range */}
             <motion.div className="mb-8" variants={cardVariants}>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Khoảng giá (VNĐ)
@@ -220,7 +199,10 @@ export default function ToursByCategoryPage() {
                     </option>
                   ))}
                 </select>
-                <ArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" size={16} />
+                <ArrowDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                  size={16}
+                />
               </div>
             </motion.div>
 
@@ -240,7 +222,10 @@ export default function ToursByCategoryPage() {
                   <option value="priceAsc">Giá tăng dần</option>
                   <option value="priceDesc">Giá giảm dần</option>
                 </select>
-                <ArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" size={16} />
+                <ArrowDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                  size={16}
+                />
               </div>
             </motion.div>
 
@@ -274,9 +259,6 @@ export default function ToursByCategoryPage() {
             </motion.div>
           </main>
         </div>
-
-        {/* Decorative Floating Elements */}
-        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white/10 to-transparent pointer-events-none"></div>
       </div>
     </div>
   );

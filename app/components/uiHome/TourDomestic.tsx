@@ -3,17 +3,28 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import TourCard from "../ui/TourCard";
 import { Tour } from "@/app/types/Tours";
+import { useRouter } from "next/navigation";
 
 const TourDomestic = () => {
   const [tours, setTours] = useState<Tour[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTours = async () => {
-      const res = await fetch(
-        "http://localhost:5000/api/tours/fixed-category/du-lich-trong-nuoc"
-      );
-      const data = await res.json();
-      setTours(data.data || []);
+      try {
+        const res = await fetch(
+          "http://localhost:5000/api/tours/fixed-category/du-lich-trong-nuoc"
+        );
+        const data = await res.json();
+        const ongoingTours = (data.data || []).filter(
+          (tour: Tour) => tour.tourStatus === "ongoing"
+        );
+
+        // Chỉ lấy 3 tour đầu
+        setTours(ongoingTours.slice(0, 3));
+      } catch (error) {
+        console.error("Lỗi khi tải tour trong nước:", error);
+      }
     };
     fetchTours();
   }, []);
@@ -30,15 +41,7 @@ const TourDomestic = () => {
         >
           Khám Phá Tour Trong Nước
         </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="mt-4 text-lg text-gray-600"
-        >
-          Những hành trình tuyệt vời từ Bắc vào Nam, mang đến cho bạn trải nghiệm
-          độc đáo và đáng nhớ.
-        </motion.p>
+
         <div className="mt-6 flex justify-center">
           <span className="w-32 h-1 bg-blue-500 rounded-full"></span>
         </div>
@@ -56,9 +59,9 @@ const TourDomestic = () => {
             transition: { staggerChildren: 0.15 },
           },
         }}
-        className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"
+        className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10"
       >
-        {tours.map((tour, index) => (
+        {tours.map((tour) => (
           <motion.div
             key={tour.id}
             variants={{
@@ -66,12 +69,30 @@ const TourDomestic = () => {
               visible: { opacity: 1, y: 0 },
             }}
             transition={{ duration: 0.6 }}
-            className="hover:scale-105 transition-transform duration-300"
           >
             <TourCard tour={tour} />
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Nút khám phá thêm */}
+      {tours.length > 0 && (
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push("/categories/du-lich-trong-nuoc")}
+            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition-all duration-300"
+          >
+            🌏 Khám phá thêm
+          </motion.button>
+        </motion.div>
+      )}
     </section>
   );
 };

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaSearch, FaCalendarAlt } from "react-icons/fa";
 
 export default function TourSearchForm() {
+  const router = useRouter();
   const [filters, setFilters] = useState({
     destination: "",
     date: "",
@@ -15,7 +17,13 @@ export default function TourSearchForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Filters:", filters);
+    // Tạo query string
+    const query = new URLSearchParams();
+    if (filters.destination) query.append("destination", filters.destination);
+    if (filters.date) query.append("date", filters.date);
+
+    // Điều hướng đến page search với query
+    router.push(`/tours/search?${query.toString()}`);
   };
 
   return (

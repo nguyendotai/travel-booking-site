@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Tour } from "@/app/types/Tours";
 import { motion, easeOut } from "framer-motion";
-import { MapPin, Hotel, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
@@ -25,30 +25,27 @@ interface TourCardProps {
 const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   return (
     <motion.div
-      className="relative bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-md mx-auto overflow-hidden flex flex-col min-h-[450px]"
+      className="relative bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-md mx-auto overflow-hidden flex flex-col min-h-[480px]"
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
       whileHover="hover"
       viewport={{ once: true }}
     >
-      {/* Image Section with Overlay */}
-      <div className="relative w-full h-56">
+      {/* Image Section */}
+      <div className="relative w-full h-64">
         <Image
           src={`http://localhost:5000${tour.image}`}
           alt={tour.name}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="text-white text-sm font-medium bg-indigo-900/50 px-3 py-1 rounded-full">
-            Khám phá {tour.name}
-          </span>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-          <p className="text-white text-sm">
-            {tour.Location?.name} · {tour.startDate && tour.endDate && (
-            <span className="text-xs  px-2 py-1 rounded-lg">
+        {/* Overlay Badge for Location and Duration */}
+        <div className="absolute top-4 left-4 bg-indigo-900/70 text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
+          <MapPin size={14} />
+          {tour.Location?.name} ·{" "}
+          {tour.startDate && tour.endDate && (
+            <span>
               {(() => {
                 const start = new Date(tour.startDate);
                 const end = new Date(tour.endDate);
@@ -61,29 +58,28 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
               })()}
             </span>
           )}
-          </p>
+        </div>
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="text-white text-sm font-medium bg-indigo-900/50 px-3 py-1 rounded-full">
+            Khám phá {tour.name}
+          </span>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="p-5 flex flex-col flex-grow">
-        {/* Tour Name and Duration */}
-        <div className="flex justify-between items-start mb-3">
-          <h2 className="text-lg font-bold text-gray-800 ">{tour.name}</h2>
-          
-        </div>
-
-        {/* Description */}
-        <p className="text-gray-500 text-sm mb-3 truncate line-clamp-2 flex-grow">
-          {tour.description}
-        </p>
+      <div className="p-5 flex flex-col flex-grow gap-4">
+        {/* Tour Name */}
+        <h2 className="text-lg font-bold text-gray-800 line-clamp-2">
+          {tour.name}
+        </h2>
 
         {/* Price and Capacity */}
-        <div className="flex justify-between items-center mb-3">
-          <div className="min-h-[3.5rem] flex flex-col justify-center">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col min-h-[48px] justify-center">
             {tour.salePrice && Number(tour.salePrice) < Number(tour.price) ? (
               <>
-                <span className="text-lg font-bold text-indigo-600">
+                <span className="text-xl font-bold text-indigo-600">
                   {new Intl.NumberFormat("vi-VN").format(
                     Number(tour.salePrice)
                   )}
@@ -94,7 +90,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
                 </span>
               </>
             ) : (
-              <span className="text-lg font-bold text-indigo-600">
+              <span className="text-xl font-bold text-indigo-600">
                 {new Intl.NumberFormat("vi-VN").format(Number(tour.price))}₫
               </span>
             )}
@@ -102,28 +98,12 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
           <span className="text-sm text-gray-500">{tour.capacity} khách</span>
         </div>
 
-        {/* Tags: Location, Hotel */}
-        <div className="flex flex-col gap-2 min-h-14 mb-3">
-          {tour.Location && (
-            <div className="text-xs text-gray-700 flex items-center gap-1">
-              <MapPin size={16} className="text-indigo-600" />
-              <span className="font-semibold">Địa điểm:</span>
-              <span>{tour.Location.name}</span>
-            </div>
-          )}
-          {tour.Hotel && (
-            <div className="text-xs text-gray-700 flex items-center gap-1">
-              <Hotel size={16} className="text-indigo-600" />
-              <span className="font-semibold">Khách sạn:</span>
-              <span>{tour.Hotel.name}</span>
-            </div>
-          )}
-        </div>
+        <div className="limit-2-lines">{tour.description}</div>
 
         {/* Call to Action */}
         <Link
           href={`/tours/${tour.slug}`}
-          className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 group"
+          className="mt-auto w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 group"
         >
           Xem chi tiết
           <ArrowRight

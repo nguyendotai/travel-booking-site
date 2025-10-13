@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut, Briefcase } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store/store"; 
+import { RootState } from "../store/store";
 import { logout } from "../store/authSlice";
 import { motion, easeOut } from "framer-motion";
 
@@ -66,31 +66,47 @@ export default function Header() {
             <div className="relative ml-4">
               <motion.button
                 onClick={toggleDropdown}
-                className="flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white font-semibold hover:bg-white/20 transition-all duration-300"
+                className="flex items-center px-3 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white font-medium hover:bg-white/20 transition-all duration-300 border border-white/20"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <User size={20} className="mr-2" />
+                <User size={18} className="mr-2" />
                 {user.name}
               </motion.button>
               {isDropdownOpen && (
                 <motion.div
-                  className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200"
+                  className="absolute top-full right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-lg shadow-xl border border-white/20"
                   variants={dropdownVariants}
                   initial="hidden"
                   animate="visible"
                 >
                   <div className="p-4 text-gray-800">
-                    <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-gray-600">{user.email}</p>
+                    <p className="text-sm font-semibold text-indigo-900 truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-gray-600 mb-3 truncate">{user.email}</p>
+                    <Link
+                      href="/profile"
+                      className="block mb-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 text-center"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Hồ sơ
+                    </Link>
+                    <Link
+                      href="/my-bookings"
+                      className="block mb-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 text-center"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Đơn hàng của tôi
+                    </Link>
                     <button
                       onClick={() => {
                         dispatch(logout());
                         setIsDropdownOpen(false);
                       }}
-                      className="mt-4 w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-md font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                      className="w-full px-4 py-2 bg-transparent border border-indigo-600 text-indigo-600 rounded-md text-sm font-semibold hover:bg-indigo-600 hover:text-white transition-all duration-300 flex items-center justify-center"
                     >
-                      <LogOut size={16} className="inline mr-2" />
+                      <LogOut size={16} className="mr-2" />
                       Đăng xuất
                     </button>
                   </div>
@@ -109,7 +125,7 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="lg:hidden text-white hover:text-indigo-400 focus:outline-none"
+          className="lg:hidden text-white hover:text-purple-300 focus:outline-none"
           onClick={toggleMenu}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -127,7 +143,7 @@ export default function Header() {
       >
         <div className="flex justify-end p-4">
           <button
-            className="text-white hover:text-indigo-400 focus:outline-none"
+            className="text-white hover:text-purple-300 focus:outline-none"
             onClick={toggleMenu}
           >
             <X size={24} />
@@ -140,8 +156,8 @@ export default function Header() {
               href={link.href}
               className={`w-full text-lg font-medium transition-colors duration-200 ${
                 pathname === link.href
-                  ? "text-indigo-400 border-l-4 border-indigo-400 pl-3"
-                  : "text-white hover:text-indigo-400 hover:pl-3"
+                  ? "text-purple-300 border-l-4 border-purple-300 pl-3"
+                  : "text-white hover:text-purple-300 hover:pl-3"
               }`}
               onClick={toggleMenu}
             >
@@ -151,17 +167,31 @@ export default function Header() {
           {user ? (
             <div className="w-full space-y-4">
               <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg">
-                <p className="text-lg font-medium text-white">{user.name}</p>
-                <p className="text-sm text-gray-300">{user.email}</p>
+                <p className="text-lg font-medium text-white truncate">{user.name}</p>
+                <p className="text-sm text-gray-300 truncate">{user.email}</p>
               </div>
+              <Link
+                href="/profile"
+                className="block w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-center font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                onClick={toggleMenu}
+              >
+                Hồ sơ
+              </Link>
+              <Link
+                href="/my-bookings"
+                className="block w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-center font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                onClick={toggleMenu}
+              >
+                Đơn hàng của tôi
+              </Link>
               <button
                 onClick={() => {
                   dispatch(logout());
                   toggleMenu();
                 }}
-                className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                className="w-full py-2 bg-transparent border border-purple-300 text-purple-300 rounded-lg font-semibold hover:bg-purple-300 hover:text-indigo-900 transition-all duration-300 flex items-center justify-center"
               >
-                <LogOut size={16} className="inline mr-2" />
+                <LogOut size={16} className="mr-2" />
                 Đăng xuất
               </button>
             </div>

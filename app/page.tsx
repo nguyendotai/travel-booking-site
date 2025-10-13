@@ -4,17 +4,16 @@ import TourDomestic from "./components/uiHome/TourDomestic";
 import TourInternational from "./components/uiHome/TourInternational";
 import HotDeals from "./components/uiHome/HotDeals";
 import Testimonials from "./components/uiHome/Testimonials";
-import TopDestinationsDomestic from "./components/uiHome/TopDestinationsDomestic";
-import TopDestinationsInternational from "./components/uiHome/TopDestinationsInternational";
+import TopDestinations from "./components/uiHome/TopDestinations";
 import Newsletter from "./components/uiHome/Newsletter";
 
 export default function Home() {
   return (
     <div className="max-w-full mx-auto">
-      <div className="max-w-4xl my-20 mx-auto">
+      <div className="max-w-4xl my-2 mx-auto">
           <CategoriesImage />
       </div>
-      <div className="w-full mx-auto my-20">
+      <div className="w-full mx-auto my-10">
           <IntroSection></IntroSection>
       </div>
       <div className="max-w-7xl my-20 mx-auto">
@@ -30,10 +29,10 @@ export default function Home() {
         <Testimonials></Testimonials>
       </div>
       <div className="max-w-7xl my-20 mx-auto">
-        <TopDestinationsDomestic></TopDestinationsDomestic>
+         <TopDestinations categoryId={1} title="Điểm đến nổi bật trong nước" />
       </div>
       <div className="max-w-7xl my-20 mx-auto">
-        <TopDestinationsInternational></TopDestinationsInternational>
+        <TopDestinations categoryId={2} title="Điểm đến nổi bật nước ngoài" />
       </div>
       <div className="max-w-7xl my-20 mx-auto">
         <Newsletter ></Newsletter>
