@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { motion, easeOut } from "framer-motion";
 import { Tour } from "@/app/types/Tours";
 import { Location } from "@/app/types/Locations";
@@ -26,10 +25,7 @@ const cardVariants = {
   },
 };
 
-export default function ToursByDestinationPage() {
-  const params = useParams();
-  const destinationId = params.id;
-
+export default function ExplorePage() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,14 +43,12 @@ export default function ToursByDestinationPage() {
     const fetchTours = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          `http://localhost:5000/api/tours/destination/${destinationId}`
-        );
+        const res = await fetch(`http://localhost:5000/api/tours`);
         const data = await res.json();
-        const ongoingTours = data.data.filter(
-          (tour: Tour) => tour.tourStatus === "ongoing"
-        );
-        if (ongoingTours.success) {
+        if (data.success && data.data.length > 0) {
+          const ongoingTours = data.data.filter(
+            (tour: Tour) => tour.tourStatus === "ongoing"
+          );
           setTours(ongoingTours);
         }
       } catch (err) {
@@ -74,15 +68,15 @@ export default function ToursByDestinationPage() {
       }
     };
 
-    if (destinationId) {
-      fetchTours();
-      fetchLocations();
-    }
-  }, [destinationId]);
+    fetchTours();
+    fetchLocations();
+  }, []);
 
   const filteredAndSortedTours = tours
     .filter((tour) => {
-      const price = tour.salePrice ? Number(tour.salePrice) : Number(tour.price);
+      const price = tour.salePrice
+        ? Number(tour.salePrice)
+        : Number(tour.price);
       if (selectedPriceRange) {
         if (price < selectedPriceRange.min || price > selectedPriceRange.max)
           return false;
@@ -97,23 +91,31 @@ export default function ToursByDestinationPage() {
       if (sortBy === "priceAsc") return priceA - priceB;
       if (sortBy === "priceDesc") return priceB - priceA;
       if (sortBy === "dateAsc")
-        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        return (
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        );
       if (sortBy === "dateDesc")
-        return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+        return (
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        );
       return 0;
     });
 
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-xl text-purple-700 animate-pulse">Đang tải tour...</p>
+        <p className="text-xl text-purple-700 animate-pulse">
+          Đang tải tour...
+        </p>
       </div>
     );
 
   if (!tours.length)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-xl text-red-600">Không có tour nào cho điểm đến này</p>
+        <p className="text-xl text-red-600">
+          Không có tour nào cho điểm đến này
+        </p>
       </div>
     );
 

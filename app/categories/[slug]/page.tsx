@@ -58,7 +58,10 @@ export default function ToursByCategoryPage() {
       const data = await res.json();
 
       if (data.success && data.data.length > 0) {
-        setTours(data.data);
+        const ongoingTours = data.data.filter(
+          (tour: Tour) => tour.tourStatus === "ongoing"
+        );
+        setTours(ongoingTours);
         setCategoryName(data.data[0].fixedCategory?.name || "");
         const imageUrl = data.data[0].fixedCategory?.image
           ? `http://localhost:5000${data.data[0].fixedCategory.image}`
@@ -220,7 +223,10 @@ export default function ToursByCategoryPage() {
                     </option>
                   ))}
                 </select>
-                <ArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" size={16} />
+                <ArrowDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                  size={16}
+                />
               </div>
             </motion.div>
 
@@ -240,7 +246,10 @@ export default function ToursByCategoryPage() {
                   <option value="priceAsc">Giá tăng dần</option>
                   <option value="priceDesc">Giá giảm dần</option>
                 </select>
-                <ArrowDown className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500" size={16} />
+                <ArrowDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                  size={16}
+                />
               </div>
             </motion.div>
 

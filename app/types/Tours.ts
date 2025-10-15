@@ -3,6 +3,23 @@ import { Location } from "./Locations";
 import { Hotel } from "./Hotels";
 import { Destination } from "./Destination";
 
+export interface TourDayDestination {
+  id: number;
+  tourDayId: number;
+  destinationId: number;
+  order: number;
+  Destination: Destination;
+}
+
+export interface TourDay {
+  id: number;
+  tourId: number;
+  dayNumber: number;
+  title: string;
+  description: string;
+  TourDayDestinations: TourDayDestination[];
+}
+
 export interface Tour {
   id: number;
   name: string;
@@ -27,5 +44,8 @@ export interface Tour {
 
   Destination: Destination;
   Location: Location;  
-  Hotel: Hotel;       
+  Hotel: Hotel;
+
+  // 👇 Thêm dòng này
+  tourDays: TourDay[];
 }
