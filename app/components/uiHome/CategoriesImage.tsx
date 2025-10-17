@@ -95,7 +95,7 @@ const CategoriesImage = () => {
                     {cate.name}
                   </h3>
                   <a
-                    href={`/explore/${cate.id}`}
+                    href={`/categories/${cate.slug}`}
                     className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
                   >
                     Khám Phá
