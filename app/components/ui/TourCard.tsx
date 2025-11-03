@@ -23,9 +23,36 @@ interface TourCardProps {
 }
 
 const TourCard: React.FC<TourCardProps> = ({ tour }) => {
+  // Gắn màu cho trạng thái
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case "ongoing":
+        return "bg-green-500";
+      case "upcoming":
+        return "bg-yellow-500";
+      case "finished":
+        return "bg-gray-500";
+      default:
+        return "bg-indigo-500";
+    }
+  };
+
+  const getStatusLabel = (status?: string) => {
+    switch (status) {
+      case "ongoing":
+        return "Đang diễn ra";
+      case "upcoming":
+        return "Sắp diễn ra";
+      case "finished":
+        return "Đã kết thúc";
+      default:
+        return "Không xác định";
+    }
+  };
+
   return (
     <motion.div
-      className="relative bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl max-w-md mx-auto overflow-hidden flex flex-col min-h-[480px]"
+      className="relative bg-white/95 backdrop-blur-lg shadow rounded-2xl max-w-md mx-auto overflow-hidden flex flex-col min-h-[480px] group"
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
@@ -35,11 +62,23 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
       {/* Image Section */}
       <div className="relative w-full h-64">
         <Image
-          src={`http://localhost:5000${tour.image}`}
+          src={`${tour.image}`}
           alt={tour.name}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
+
+        {/* Trạng thái tour */}
+        {tour.tourStatus && (
+          <div
+            className={`absolute top-55 right-4 ${getStatusColor(
+              tour.tourStatus
+            )} text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md`}
+          >
+            {getStatusLabel(tour.tourStatus)}
+          </div>
+        )}
+
         {/* Overlay Badge for Location and Duration */}
         <div className="absolute top-4 left-4 bg-indigo-900/70 text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
           <MapPin size={14} />
@@ -59,6 +98,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
             </span>
           )}
         </div>
+
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <span className="text-white text-sm font-medium bg-indigo-900/50 px-3 py-1 rounded-full">
@@ -68,7 +108,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5 flex flex-col flex-grow gap-4">
+      <div className="p-5 flex flex-col flex-grow">
         {/* Tour Name */}
         <h2 className="text-lg font-bold text-gray-800 line-clamp-2">
           {tour.name}
@@ -97,8 +137,6 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
           </div>
           <span className="text-sm text-gray-500">{tour.capacity} khách</span>
         </div>
-
-        <div className="limit-2-lines">{tour.description}</div>
 
         {/* Call to Action */}
         <Link

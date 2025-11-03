@@ -1,21 +1,70 @@
 "use client";
+import { useEffect, useState } from "react";
+import { Review } from "@/app/types/Reviews";
 
 export default function Testimonials() {
-  const reviews = [
-    { name: "Ngọc Anh", text: "Chuyến đi cực kỳ tuyệt vời, dịch vụ chu đáo!", location: "Đà Nẵng" },
-    { name: "Hoàng Minh", text: "Mình và gia đình đã có trải nghiệm đáng nhớ.", location: "Hạ Long" },
-    { name: "Lan Phương", text: "Hướng dẫn viên nhiệt tình, lịch trình hợp lý.", location: "Phú Quốc" },
-  ];
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/reviews");
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          setReviews(data.data);
+        } else {
+          setReviews([]);
+        }
+      } catch (err) {
+        console.error("Lỗi fetch reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  if (loading)
+    return (
+      <section className="my-20 max-w-6xl mx-auto text-center">
+        <p className="text-lg text-gray-600 animate-pulse">
+          Đang tải đánh giá...
+        </p>
+      </section>
+    );
+
+  if (!reviews.length)
+    return (
+      <section className="my-20 max-w-6xl mx-auto text-center">
+        <h2 className="text-3xl font-bold mb-6">Khách hàng nói gì?</h2>
+        <p className="text-gray-500">Chưa có đánh giá nào được ghi nhận.</p>
+      </section>
+    );
 
   return (
     <section className="my-20 max-w-6xl mx-auto text-center">
-      <h2 className="text-3xl font-bold mb-10">Khách hàng nói gì?</h2>
+      <h2 className="text-3xl font-bold mb-10 text-indigo-700">
+        Khách hàng nói gì?
+      </h2>
+
       <div className="grid md:grid-cols-3 gap-8">
         {reviews.map((r, idx) => (
-          <div key={idx} className="p-6 rounded-2xl shadow-lg bg-white">
-            <p className="italic mb-4">“{r.text}”</p>
-            <h4 className="font-semibold">{r.name}</h4>
-            <span className="text-sm text-gray-500">{r.location}</span>
+          <div
+            key={idx}
+            className="p-6 rounded-2xl shadow-lg bg-white border border-gray-100 hover:shadow-xl transition-all duration-300"
+          >
+            <p className="italic text-gray-700 mb-4">“{r.comment}”</p>
+            <div className="mt-3">
+              <h4 className="font-semibold text-indigo-700">
+                {r.userId || "Người dùng ẩn danh"}
+              </h4>
+              <span className="text-sm text-gray-500">
+                {r.tourId?.name ? `Tour: ${r.tourId.name}` : "Không xác định"}
+              </span>
+            </div>
           </div>
         ))}
       </div>

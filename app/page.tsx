@@ -16,19 +16,19 @@ export default function Home() {
       <div className="w-full mx-auto my-10">
           <IntroSection></IntroSection>
       </div>
-      <div className="max-w-7xl my-20 mx-auto">
+      <div className="max-w-full  mx-auto">
         <HotDeals></HotDeals>
       </div>
-      <div className="max-w-7xl my-20 mx-auto">
+      <div className="max-w-full  mx-auto">
         <TourDomestic></TourDomestic>
       </div>
-      <div className="max-w-7xl my-20 mx-auto">
+      <div className="max-w-full  mx-auto">
         <TourInternational></TourInternational>
       </div>
       <div className="max-w-7xl my-20 mx-auto">
         <Testimonials></Testimonials>
       </div>
-      <div className="max-w-7xl my-20 mx-auto">
+      <div className="max-w-full my-20 mx-auto">
          <TopDestinations categoryId={1} title="Điểm đến nổi bật trong nước" />
       </div>
       <div className="max-w-7xl my-20 mx-auto">

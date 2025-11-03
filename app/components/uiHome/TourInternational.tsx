@@ -4,10 +4,15 @@ import { motion } from "framer-motion";
 import TourCard from "../ui/TourCard";
 import { Tour } from "@/app/types/Tours";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TourInternational = () => {
   const [tours, setTours] = useState<Tour[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
+
+  const TOURS_PER_PAGE = 5;
+  const MAX_TOURS = 10;
 
   useEffect(() => {
     const fetchTours = async () => {
@@ -16,64 +21,131 @@ const TourInternational = () => {
           "http://localhost:5000/api/tours/fixed-category/du-lich-quoc-te"
         );
         const data = await res.json();
-        const ongoingTours = (data.data || []).filter(
-          (tour: Tour) => tour.tourStatus === "ongoing"
-        );
+        const filteredTours = (data.data || [])
+          .filter(
+            (tour: Tour) =>
+              tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+          )
+          .slice(0, MAX_TOURS);
 
-        // Chỉ lấy 3 tour đầu tiên
-        setTours(ongoingTours.slice(0, 3));
+        setTours(filteredTours);
       } catch (error) {
-        console.error("Lỗi khi tải tour quốc tế:", error);
+        console.error("Lỗi khi tải tour trong nước:", error);
       }
     };
     fetchTours();
   }, []);
 
-  return (
-    <section className="relative bg-gradient-to-b from-pink-50 via-white to-pink-50 py-16">
-      {/* Header */}
-      <div className="max-w-3xl mx-auto text-center mb-12">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-5xl font-extrabold text-gray-900"
-        >
-          Khám Phá Tour Quốc Tế
-        </motion.h2>
+  const totalSlides = Math.max(0, tours.length - TOURS_PER_PAGE + 1);
 
-        <div className="mt-6 flex justify-center">
-          <span className="w-32 h-1 bg-pink-500 rounded-full"></span>
+  const nextSlide = () => {
+    if (currentIndex < totalSlides - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  return (
+    <section className="relative bg-gradient-to-b from-blue-50 via-white to-blue-50 py-16 overflow-hidden">
+      {/* Header + Buttons */}
+      <div className="max-w-[1500px] mx-auto px-8 ">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-4xl md:text-5xl font-extrabold text-gray-900"
+            >
+              Khám Phá Tour Quốc Tế
+            </motion.h2>
+            <div className="mt-3 w-32 h-1 bg-blue-500 rounded-full"></div>
+          </div>
+
+          {tours.length > TOURS_PER_PAGE && (
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={prevSlide}
+                disabled={currentIndex === 0}
+                className={`p-3 rounded-full border-2 transition-all ${
+                  currentIndex === 0
+                    ? "border-gray-300 text-gray-300"
+                    : "border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                }`}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={nextSlide}
+                disabled={currentIndex >= totalSlides - 1}
+                className={`p-3 rounded-full border-2 transition-all ${
+                  currentIndex >= totalSlides - 1
+                    ? "border-gray-300 text-gray-300"
+                    : "border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                }`}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </motion.button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Grid Tours */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.15 },
-          },
-        }}
-        className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10"
-      >
-        {tours.map((tour) => (
+      {/* Carousel - Slide ngang mượt như cũ */}
+      <div className="max-w-[1500px] mx-auto px-6">
+        <div className="overflow-hidden">
           <motion.div
-            key={tour.id}
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: { opacity: 1, y: 0 },
+            className="flex"
+            animate={{
+              x: `-${currentIndex * (100 / TOURS_PER_PAGE)}%`,
             }}
-            transition={{ duration: 0.6 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
           >
-            <TourCard tour={tour} />
+            {tours.map((tour) => (
+              <div
+                key={tour.id}
+                className="flex-shrink-0"
+                style={{ width: `${100 / TOURS_PER_PAGE}%` }}
+              >
+                <div className="px-3">
+                  <TourCard tour={tour} />
+                </div>
+              </div>
+            ))}
           </motion.div>
-        ))}
-      </motion.div>
+        </div>
+
+        {/* Dots Indicator */}
+        {tours.length > TOURS_PER_PAGE && (
+          <div className="flex justify-center gap-2 mt-8">
+            {Array.from({ length: totalSlides }).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`transition-all duration-300 rounded-full ${
+                  idx === currentIndex
+                    ? "bg-blue-500 w-8 h-2"
+                    : "bg-gray-300 w-2 h-2"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Nút khám phá thêm */}
       {tours.length > 0 && (
@@ -81,15 +153,16 @@ const TourInternational = () => {
           className="text-center mt-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
         >
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/categories/du-lich-quoc-te")}
-            className="px-6 py-3 bg-pink-500 text-white font-semibold rounded-full shadow-md hover:bg-pink-600 transition-all duration-300"
+            onClick={() => router.push("/categories/du-lich-trong-nuoc")}
+            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition-all"
           >
-            🌎 Khám phá thêm
+            Khám phá thêm
           </motion.button>
         </motion.div>
       )}
@@ -98,3 +171,4 @@ const TourInternational = () => {
 };
 
 export default TourInternational;
+

@@ -169,7 +169,7 @@ export default function TourDetailPage() {
           variants={contentVariants}
         >
           <Image
-            src={`http://localhost:5000${tour.image}`}
+            src={`${tour.image}`}
             alt={tour.name}
             fill
             className="object-cover"

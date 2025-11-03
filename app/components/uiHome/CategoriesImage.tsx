@@ -79,7 +79,7 @@ const CategoriesImage = () => {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <Image
-                  src={`http://localhost:5000${cate.image}`}
+                  src={`${cate.image}`}
                   alt={cate.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"

@@ -58,13 +58,14 @@ export default function ToursByCategoryPage() {
       const data = await res.json();
 
       if (data.success && data.data.length > 0) {
-        const ongoingTours = data.data.filter(
-          (tour: Tour) => tour.tourStatus === "ongoing"
+        const allTours = (data.data || []).filter(
+          (tour: Tour) =>
+            tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
         );
-        setTours(ongoingTours);
+        setTours(allTours);
         setCategoryName(data.data[0].fixedCategory?.name || "");
         const imageUrl = data.data[0].fixedCategory?.image
-          ? `http://localhost:5000${data.data[0].fixedCategory.image}`
+          ? `${data.data[0].fixedCategory.image}`
           : "/fallback.jpg";
         setCategoryImage(imageUrl);
       }
@@ -154,7 +155,7 @@ export default function ToursByCategoryPage() {
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar */}
           <motion.aside
-            className="lg:w-1/4 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
+            className="lg:w-1/4 max-h-[538px] bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
             variants={containerVariants}
             initial="hidden"
             animate="visible"

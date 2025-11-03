@@ -51,12 +51,11 @@ export default function ToursByDestinationPage() {
           `http://localhost:5000/api/tours/destination/${destinationId}`
         );
         const data = await res.json();
-        const ongoingTours = data.data.filter(
-          (tour: Tour) => tour.tourStatus === "ongoing"
+       const allTours = (data.data || []).filter(
+          (tour: Tour) =>
+            tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
         );
-        if (ongoingTours.success) {
-          setTours(ongoingTours);
-        }
+          setTours(allTours);
       } catch (err) {
         console.error(err);
       } finally {

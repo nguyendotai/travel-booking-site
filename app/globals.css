@@ -5,3 +5,41 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.swiper-button-prev,
+.swiper-button-next {
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Dịch mũi tên ra khỏi carousel một chút */
+.swiper-button-prev {
+  left: -20px !important;
+}
+.swiper-button-next {
+  right: -10px !important;
+}
+
+/* Tối ưu hiệu ứng carousel */
+.tour-card-motion > * {
+  will-change: transform, opacity;
+}
+

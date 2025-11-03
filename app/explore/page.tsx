@@ -46,10 +46,11 @@ export default function ExplorePage() {
         const res = await fetch(`http://localhost:5000/api/tours`);
         const data = await res.json();
         if (data.success && data.data.length > 0) {
-          const ongoingTours = data.data.filter(
-            (tour: Tour) => tour.tourStatus === "ongoing"
-          );
-          setTours(ongoingTours);
+          const allTours = (data.data || []).filter(
+          (tour: Tour) =>
+            tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+        );
+          setTours(allTours);
         }
       } catch (err) {
         console.error(err);

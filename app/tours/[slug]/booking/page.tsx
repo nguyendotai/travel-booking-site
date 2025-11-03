@@ -45,7 +45,7 @@ export default function BookingPage() {
         body: JSON.stringify({
           tour_id: tour.id,
           quantity,
-          method: "stripe",
+          method
         }),
       });
 
@@ -98,7 +98,7 @@ export default function BookingPage() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all hover:shadow-2xl">
           <div className="relative h-80 w-full">
             <Image
-              src={`http://localhost:5000${tour.image}`}
+              src={`${tour.image}`}
               alt={tour.name}
               fill
               className="object-cover"
@@ -170,6 +170,7 @@ export default function BookingPage() {
                   <option value="credit_card">Thẻ tín dụng</option>
                   <option value="paypal">PayPal</option>
                   <option value="bank_transfer">Chuyển khoản</option>
+                  <option value="stripe">Thanh toán qua Stripe</option>
                 </select>
               </div>
             </div>
