@@ -65,7 +65,7 @@ export default function TopDestinations({ categoryId, title }: Props) {
           >
             {/* Ảnh nền */}
             <Image
-              src={`http://localhost:5000${d.image}`}
+              src={`https://travel-booking-backend-production.up.railway.app${d.image}`}
               alt={d.name}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
