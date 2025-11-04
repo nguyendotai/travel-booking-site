@@ -18,7 +18,7 @@ export default function BookingPage() {
   useEffect(() => {
     const fetchTour = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/tours/${slug}`);
+        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/tours/${slug}`);
         const result = await res.json();
         setTour(result.data);
       } catch (err) {
@@ -36,7 +36,7 @@ export default function BookingPage() {
     setProcessing(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/bookings", {
+      const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

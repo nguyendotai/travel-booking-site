@@ -9,7 +9,7 @@ export default function Testimonials() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/reviews");
+        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/reviews");
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {

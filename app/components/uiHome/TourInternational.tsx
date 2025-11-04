@@ -18,7 +18,7 @@ const TourInternational = () => {
     const fetchTours = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/tours/fixed-category/du-lich-quoc-te"
+          "https://travel-booking-backend-production.up.railway.app/api/tours/fixed-category/du-lich-quoc-te"
         );
         const data = await res.json();
         const filteredTours = (data.data || [])
@@ -60,7 +60,7 @@ const TourInternational = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl md:text-5xl font-extrabold text-gray-900"
+              className="text-4xl md:text-4xl font-bold text-gray-900"
             >
               Khám Phá Tour Quốc Tế
             </motion.h2>

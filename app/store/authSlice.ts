@@ -4,7 +4,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
@@ -25,7 +25,7 @@ export const updateProfile = createAsyncThunk(
       const state: any = thunkAPI.getState();
       const token = state.auth.token;
 
-      const res = await fetch("http://localhost:5000/api/auth/update", {
+      const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/auth/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

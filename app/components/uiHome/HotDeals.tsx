@@ -18,7 +18,7 @@ const HotDeals = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/tours/hot-deals");
+        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/tours/hot-deals");
         const data = await res.json();
         const filteredTours = (data.data || [])
           .filter(

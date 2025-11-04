@@ -54,7 +54,7 @@ export default function SearchToursPage() {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:5000/api/tours/search?destination=${destination}&date=${date}`
+          `https://travel-booking-backend-production.up.railway.app/api/tours/search?destination=${destination}&date=${date}`
         );
         const data = await res.json();
         if (data.success) {
@@ -69,7 +69,7 @@ export default function SearchToursPage() {
 
     const fetchLocations = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/locations`);
+        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/locations`);
         const data = await res.json();
         if (data.success) setLocations(data.data);
       } catch (err) {

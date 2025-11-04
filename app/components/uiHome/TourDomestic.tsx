@@ -60,7 +60,7 @@ const TourDomestic = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl md:text-5xl font-extrabold text-gray-900"
+              className="text-4xl md:text-4xl font-bold text-gray-900"
             >
               Khám Phá Tour Trong Nước
             </motion.h2>

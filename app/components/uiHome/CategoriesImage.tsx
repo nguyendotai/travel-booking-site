@@ -31,7 +31,7 @@ const CategoriesImage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/categories/fixed");
+        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/categories/fixed");
         const result = await res.json();
         setCategories(result.data || []);
       } catch (err) {

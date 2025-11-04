@@ -53,7 +53,7 @@ export default function ToursByCategoryPage() {
   const fetchTours = async (slug: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tours/fixed-category/${slug}`
+        `https://travel-booking-backend-production.up.railway.app/api/tours/fixed-category/${slug}`
       );
       const data = await res.json();
 
@@ -79,7 +79,7 @@ export default function ToursByCategoryPage() {
   const fetchLocations = async (slug: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/locations/category/${slug}`
+        `https://travel-booking-backend-production.up.railway.app/api/locations/category/${slug}`
       );
       const data = await res.json();
       if (data.success) setLocations(data.data);

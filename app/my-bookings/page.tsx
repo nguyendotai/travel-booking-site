@@ -41,7 +41,7 @@ export default function MyBookingsPage() {
           return;
         }
 
-        const res = await fetch("http://localhost:5000/api/bookings/my", {
+        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/bookings/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -142,7 +142,7 @@ export default function MyBookingsPage() {
                 >
                   <div className="relative h-40 w-full">
                     <Image
-                      src={`http://localhost:5000${booking.Tour.image}`}
+                      src={`${booking.Tour.image}`}
                       alt={booking.Tour.name}
                       fill
                       className="object-cover opacity-80"

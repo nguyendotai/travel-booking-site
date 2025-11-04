@@ -19,7 +19,7 @@ export default function TopDestinations({ categoryId, title }: Props) {
     const fetchDestinations = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/destinations/featured?categoryId=${categoryId}`
+          `https://travel-booking-backend-production.up.railway.app/api/destinations/featured?categoryId=${categoryId}`
         );
         const result = await res.json();
         setDestinations(result.data);

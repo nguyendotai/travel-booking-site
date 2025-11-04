@@ -61,7 +61,7 @@ export default function TourDetailPage() {
   useEffect(() => {
     const fetchTour = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/tours/${slug}`);
+        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/tours/${slug}`);
         const result = await res.json();
         setTour(result.data);
         if (result.data?.id) fetchReviews(result.data.id);
@@ -77,7 +77,7 @@ export default function TourDetailPage() {
   const fetchReviews = async (tourId: number) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/reviews/tour/${tourId}`
+        `https://travel-booking-backend-production.up.railway.app/api/reviews/tour/${tourId}`
       );
       const result = await res.json();
       if (result.success) {
@@ -98,7 +98,7 @@ export default function TourDetailPage() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:5000/api/reviews/tour/${tour.id}`,
+        `https://travel-booking-backend-production.up.railway.app/api/reviews/tour/${tour.id}`,
         {
           method: "POST",
           headers: {
@@ -328,7 +328,7 @@ export default function TourDetailPage() {
                                 {d.Destination?.image && (
                                   <div className="relative w-full sm:w-48 h-32 rounded-lg overflow-hidden shadow-md">
                                     <Image
-                                      src={`http://localhost:5000${d.Destination.image}`}
+                                      src={`https://travel-booking-backend-production.up.railway.app${d.Destination.image}`}
                                       alt={d.Destination.name}
                                       fill
                                       className="object-cover"
