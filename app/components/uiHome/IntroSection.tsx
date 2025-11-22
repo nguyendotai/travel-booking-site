@@ -36,7 +36,7 @@ const iconVariants = {
 
 export default function IntroSection() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
       {/* LEFT: Image */}
       <motion.div
         className="relative w-full lg:w-1/2 rounded-2xl overflow-hidden shadow-2xl"

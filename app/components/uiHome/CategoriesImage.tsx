@@ -5,6 +5,8 @@ import { Category } from "@/app/types/Categories";
 import { motion, easeOut } from "framer-motion";
 import { MapPin, ArrowRight } from "lucide-react";
 
+import { categoriesMock } from "@/app/mock/categories";
+
 const cardVariants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: {
@@ -28,12 +30,23 @@ const CategoriesImage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchCategoriesData = async (): Promise<Category[]> => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+      return categoriesMock;
+    } else {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/fixed`
+      );
+      const data = await res.json();
+      return (data.data || []);
+    }
+  };
+
   useEffect(() => {
-    const fetchCategories = async () => {
+    const loadCategories = async () => {
       try {
-        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/categories/fixed");
-        const result = await res.json();
-        setCategories(result.data || []);
+        const categoriesData = await fetchCategoriesData();
+        setCategories(categoriesData)
       } catch (err) {
         console.error("Failed to fetch destinations:", err);
       } finally {
@@ -41,12 +54,12 @@ const CategoriesImage = () => {
       }
     };
 
-    fetchCategories();
+    loadCategories();
   }, []);
 
   return (
     <motion.section
-      className="relative py-16 bg-gradient-to-b from-indigo-50/50 to-white/90"
+      className="relative py-10 bg-gradient-to-b from-indigo-50/50 to-white/90"
       initial={{ opacity: 0, y: 80 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}

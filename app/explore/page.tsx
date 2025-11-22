@@ -8,6 +8,9 @@ import TourCard from "@/app/components/ui/TourCard";
 import { ArrowDown } from "lucide-react";
 import { FaFilter } from "react-icons/fa";
 
+import { toursDomesticMock } from "@/app/mock/toursDomestic";
+import { locationsMock } from "@/app/mock/locations";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -40,37 +43,60 @@ export default function ExplorePage() {
 
   // Fetch tours theo destination
   useEffect(() => {
-    const fetchTours = async () => {
+    const fetchData = async () => {
+      setLoading(true);
+
       try {
-        setLoading(true);
-        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/tours`);
-        const data = await res.json();
-        if (data.success && data.data.length > 0) {
-          const allTours = (data.data || []).filter(
-          (tour: Tour) =>
-            tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
-        );
-          setTours(allTours);
+        const useMock = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+
+        // --------------------
+        // 🟣 MOCK MODE
+        // --------------------
+        if (useMock) {
+          const mockTours = toursDomesticMock.filter(
+            (t) =>
+              t.tourStatus === "ongoing" || t.tourStatus === "upcoming"
+          );
+
+          setTours(mockTours);
+          setLocations(locationsMock);
+
+          return;
         }
+
+        // --------------------
+        // 🔵 API MODE
+        // --------------------
+        const API = process.env.NEXT_PUBLIC_API_URL;
+
+        const [toursRes, locationsRes] = await Promise.all([
+          fetch(`${API}/tours`),
+          fetch(`${API}/locations`)
+        ]);
+
+        const toursJson = await toursRes.json();
+        const locationsJson = await locationsRes.json();
+
+        if (toursJson.success && toursJson.data.length > 0) {
+          const activeTours = toursJson.data.filter(
+            (tour: Tour) =>
+              tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+          );
+          setTours(activeTours);
+        }
+
+        if (locationsJson.success) {
+          setLocations(locationsJson.data);
+        }
+
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching tours/locations:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchLocations = async () => {
-      try {
-        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/locations`);
-        const data = await res.json();
-        if (data.success) setLocations(data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchTours();
-    fetchLocations();
+    fetchData();
   }, []);
 
   const filteredAndSortedTours = tours

@@ -9,6 +9,9 @@ import TourCard from "@/app/components/ui/TourCard";
 import { ArrowDown } from "lucide-react";
 import { FaFilter } from "react-icons/fa";
 
+import { toursDomesticMock } from "@/app/mock/toursDomestic";
+import { locationsMock } from "@/app/mock/locations";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -43,50 +46,68 @@ export default function ToursByCategoryPage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
-  useEffect(() => {
-    if (slug) {
-      fetchTours(slug);
-      fetchLocations(slug);
-    }
-  }, [slug]);
-
   const fetchTours = async (slug: string) => {
     try {
+      if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+        // Lọc đúng category theo slug
+        const data = toursDomesticMock.filter(
+          (t) => t.fixedCategory?.slug === slug
+        );
+
+        if (data.length > 0) {
+          setTours(data);
+          setCategoryName(data[0].fixedCategory?.name || "");
+          setCategoryImage(data[0].fixedCategory?.image || "/fallback.jpg");
+        }
+
+        return;
+      }
+
+      // Fetch API thật từ .env
       const res = await fetch(
-        `https://travel-booking-backend-production.up.railway.app/api/tours/fixed-category/${slug}`
+        `${process.env.NEXT_PUBLIC_API_URL}/tours/fixed-category/${slug}`
       );
       const data = await res.json();
 
       if (data.success && data.data.length > 0) {
-        const allTours = (data.data || []).filter(
+        const filtered = data.data.filter(
           (tour: Tour) =>
             tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
         );
-        setTours(allTours);
+
+        setTours(filtered);
         setCategoryName(data.data[0].fixedCategory?.name || "");
-        const imageUrl = data.data[0].fixedCategory?.image
-          ? `${data.data[0].fixedCategory.image}`
-          : "/fallback.jpg";
-        setCategoryImage(imageUrl);
+        setCategoryImage(data.data[0].fixedCategory?.image || "/fallback.jpg");
       }
     } catch (err) {
       console.error("Lỗi lấy tour:", err);
-    } finally {
-      setLoading(false);
     }
   };
-
   const fetchLocations = async (slug: string) => {
     try {
+      if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+        setLocations(locationsMock);
+        return;
+      }
+
       const res = await fetch(
-        `https://travel-booking-backend-production.up.railway.app/api/locations/category/${slug}`
+        `${process.env.NEXT_PUBLIC_API_URL}/locations/category/${slug}`
       );
+
       const data = await res.json();
       if (data.success) setLocations(data.data);
     } catch (err) {
       console.error("Lỗi lấy địa điểm:", err);
     }
   };
+
+  useEffect(() => {
+    if (slug) {
+      Promise.all([fetchTours(slug), fetchLocations(slug)]).finally(() =>
+        setLoading(false)
+      );
+    }
+  }, [slug]);
 
   const filteredAndSortedTours = tours
     .filter((tour) => {

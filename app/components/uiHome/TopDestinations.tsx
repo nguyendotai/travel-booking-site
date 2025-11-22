@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Destination } from "@/app/types/Destination";
 import { useRouter } from "next/navigation";
 
+import { destinationsMock } from "@/app/mock/destinations";
+
 interface Props {
   categoryId: number;
   title: string;
@@ -15,20 +17,31 @@ export default function TopDestinations({ categoryId, title }: Props) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const router = useRouter();
 
+  const fetchDestinationsData = async (): Promise<Destination[]> => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+          return (
+            destinationsMock
+          );
+        } else {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/destinations/featured?categoryId=${categoryId}`
+          );
+          const data = await res.json();
+          return (data.data || []);
+        }
+  }
+
   useEffect(() => {
-    const fetchDestinations = async () => {
+    const loadDestination = async () => {
       try {
-        const res = await fetch(
-          `https://travel-booking-backend-production.up.railway.app/api/destinations/featured?categoryId=${categoryId}`
-        );
-        const result = await res.json();
-        setDestinations(result.data);
+        const destination = await fetchDestinationsData();
+        setDestinations(destination);
       } catch (err) {
         console.error("Failed to fetch destinations:", err);
       }
     };
 
-    fetchDestinations();
+    loadDestination();
   }, [categoryId]);
 
   const handleExplore = (id: number) => {

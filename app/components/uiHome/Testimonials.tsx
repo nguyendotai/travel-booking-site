@@ -2,29 +2,35 @@
 import { useEffect, useState } from "react";
 import { Review } from "@/app/types/Reviews";
 
+import { reviewsMock } from "@/app/mock/reviews";
+
 export default function Testimonials() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/reviews");
-        const data = await res.json();
+  const fetchReviewsData = async (): Promise<Review[]> => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+      return reviewsMock;
+    } else {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews`);
+      const data = await res.json();
+      return data.data || [];
+    }
+  };
 
-        if (data.success && Array.isArray(data.data)) {
-          setReviews(data.data);
-        } else {
-          setReviews([]);
-        }
+  useEffect(() => {
+    const loadReview = async () => {
+      try {
+        const review = await fetchReviewsData();
+        setReviews(review);
       } catch (err) {
-        console.error("Lỗi fetch reviews:", err);
+        console.error("Failed to fetch reviews:", err);
       } finally {
-        setLoading(false);
+        setLoading(false); // <<< QUAN TRỌNG
       }
     };
 
-    fetchReviews();
+    loadReview();
   }, []);
 
   if (loading)

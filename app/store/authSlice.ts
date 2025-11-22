@@ -1,16 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { loginMock, updateProfileMock } from "../mock/authMock";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+
+// ====================== LOGIN ======================
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
-      const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/auth/login", {
+      // -------- MOCK --------
+      if (USE_MOCK) {
+        return await loginMock(credentials.email, credentials.password);
+      }
+
+      // -------- API THẬT --------
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Đăng nhập thất bại!");
+
       return data; // { token, user }
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
@@ -18,14 +31,20 @@ export const login = createAsyncThunk(
   }
 );
 
+// ====================== UPDATE PROFILE ======================
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (userData: any, thunkAPI) => {
     try {
+      // -------- MOCK --------
+      if (USE_MOCK) {
+        return await updateProfileMock(userData);
+      }
+
       const state: any = thunkAPI.getState();
       const token = state.auth.token;
 
-      const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/auth/update", {
+      const res = await fetch(`${API_URL}/auth/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -44,6 +63,7 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+// ====================== STATE ======================
 interface AuthState {
   user: any;
   token: string | null;
@@ -61,6 +81,7 @@ const initialState: AuthState = {
   error: null,
 };
 
+// ====================== SLICE ======================
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -68,12 +89,15 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     },
   },
   extraReducers: (builder) => {
     builder
+      // LOGIN
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -82,16 +106,24 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem("token", action.payload.token);
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem("token", action.payload.token);
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
+
+      // UPDATE PROFILE
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.user = action.payload;
-        localStorage.setItem("user", JSON.stringify(action.payload));
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user", JSON.stringify(action.payload));
+        }
       });
   },
 });

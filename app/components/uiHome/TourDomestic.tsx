@@ -6,6 +6,8 @@ import { Tour } from "@/app/types/Tours";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { toursDomesticMock } from "@/app/mock/toursDomestic";
+
 const TourDomestic = () => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -14,26 +16,39 @@ const TourDomestic = () => {
   const TOURS_PER_PAGE = 5;
   const MAX_TOURS = 10;
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        const res = await fetch(
-          "https://travel-booking-backend-production.up.railway.app/api/tours/fixed-category/du-lich-trong-nuoc"
-        );
-        const data = await res.json();
-        const filteredTours = (data.data || [])
+  const fetchToursData = async (): Promise<Tour[]> => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+      return (
+        toursDomesticMock
           .filter(
-            (tour: Tour) =>
+            (tour) =>
               tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
           )
-          .slice(0, MAX_TOURS);
+          .filter((tour) => tour.fixedCategory.slug === "du-lich-trong-nuoc")
+          .slice(0, MAX_TOURS)
+      );
+    } else {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tours/fixed-category/du-lich-trong-nuoc`
+      );
+      const data = await res.json();
+      return (data.data || []).filter(
+        (tour: Tour) =>
+          tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+      );
+    }
+  };
 
-        setTours(filteredTours);
+  useEffect(() => {
+    const loadTours = async () => {
+      try {
+        const toursData = await fetchToursData();
+        setTours(toursData.slice(0, MAX_TOURS));
       } catch (error) {
         console.error("Lỗi khi tải tour trong nước:", error);
       }
     };
-    fetchTours();
+    loadTours();
   }, []);
 
   const totalSlides = Math.max(0, tours.length - TOURS_PER_PAGE + 1);
@@ -51,7 +66,7 @@ const TourDomestic = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-b from-blue-50 via-white to-blue-50 py-16 overflow-hidden">
+    <section className="relative bg-gradient-to-b from-blue-50 via-white to-blue-50 py-10 overflow-hidden">
       {/* Header + Buttons */}
       <div className="max-w-[1500px] mx-auto px-8 ">
         <div className="flex items-center justify-between mb-12">
@@ -101,19 +116,13 @@ const TourDomestic = () => {
         </div>
       </div>
 
-      {/* Carousel - Slide ngang mượt như cũ */}
+      {/* Carousel */}
       <div className="max-w-[1500px] mx-auto px-6">
         <div className="overflow-hidden">
           <motion.div
             className="flex"
-            animate={{
-              x: `-${currentIndex * (100 / TOURS_PER_PAGE)}%`,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 30,
-            }}
+            animate={{ x: `-${currentIndex * (100 / TOURS_PER_PAGE)}%` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             {tours.map((tour) => (
               <div

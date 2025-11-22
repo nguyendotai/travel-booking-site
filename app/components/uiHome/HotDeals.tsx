@@ -6,6 +6,8 @@ import { Tour } from "@/app/types/Tours";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { toursDomesticMock } from "@/app/mock/toursDomestic";
+
 const HotDeals = () => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -15,52 +17,66 @@ const HotDeals = () => {
   const TOURS_PER_PAGE = 5;
   const MAX_TOURS = 10;
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/tours/hot-deals");
-        const data = await res.json();
-        const filteredTours = (data.data || [])
-          .filter(
+  const fetchToursData = async () : Promise<Tour[]> => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+          return (
+            toursDomesticMock
+              .filter(
+                (tour) =>
+                  tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+              )
+              .filter((tour) => tour.isHotDeal === true)
+              .slice(0, MAX_TOURS)
+          );
+        } else {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/tours/hot-deals`
+          );
+          const data = await res.json();
+          return (data.data || []).filter(
             (tour: Tour) =>
               tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
-          )
-          .slice(0, MAX_TOURS); // Tối đa 10 tour
+          );
+        }
+  } 
 
-        setTours(filteredTours);
-      } catch (error) {
-        console.error("Lỗi khi tải Hot Deals:", error);
-      }
-    };
-    fetchTours();
-  }, []);
+  useEffect(() => {
+      const loadTours = async () => {
+        try {
+          const toursData = await fetchToursData();
+          setTours(toursData.slice(0, MAX_TOURS));
+        } catch (error) {
+          console.error("Lỗi khi tải tour trong nước:", error);
+        }
+      };
+      loadTours();
+    }, []);
 
   // Kiểm tra đã click "Khám phá thêm" chưa
-useEffect(() => {
-  // Nếu người dùng đã thấy nút rồi thì ẩn luôn (không animate nữa)
-  const seen = localStorage.getItem("hasSeenHotDealsButton");
-  if (seen === "true") {
-    setHasClickedExplore(true);
-  }
+  useEffect(() => {
+    // Nếu người dùng đã thấy nút rồi thì ẩn luôn (không animate nữa)
+    const seen = localStorage.getItem("hasSeenHotDealsButton");
+    if (seen === "true") {
+      setHasClickedExplore(true);
+    }
 
-  const clicked = localStorage.getItem("hasClickedHotDealsExplore");
-  if (clicked === "true") {
-    setHasClickedExplore(true);
-  }
-}, []);
-
+    const clicked = localStorage.getItem("hasClickedHotDealsExplore");
+    if (clicked === "true") {
+      setHasClickedExplore(true);
+    }
+  }, []);
 
   const totalSlides = Math.max(0, tours.length - TOURS_PER_PAGE + 1);
 
   const nextSlide = () => {
     if (currentIndex < totalSlides - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     }
   };
 
   const prevSlide = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     }
   };
 
@@ -166,7 +182,9 @@ useEffect(() => {
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
                     className={`transition-all duration-300 rounded-full ${
-                      idx === currentIndex ? "bg-white w-8 h-2" : "bg-white/50 w-2 h-2"
+                      idx === currentIndex
+                        ? "bg-white w-8 h-2"
+                        : "bg-white/50 w-2 h-2"
                     }`}
                   />
                 ))}

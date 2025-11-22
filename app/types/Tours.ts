@@ -34,6 +34,7 @@ export interface Tour {
   status: string;
   tourStatus: string;
   salePrice: number;
+  isHotDeal: boolean;
 
   location_id: number;
   hotel_id: number;
