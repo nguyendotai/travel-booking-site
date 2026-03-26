@@ -6,13 +6,15 @@ import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { motion, AnimatePresence, easeOut } from "framer-motion";
 import { Tour } from "../types/Tours";
 
+import { bookingsMock } from "@/app/mock/bookings";
+
 interface Booking {
   id: number;
   quantity: number;
   total_price: number;
   status: string;
   createdAt: string;
-  Tour: Tour;
+  Tour: Tour ;
 }
 
 const STATUS_TABS = [
@@ -35,15 +37,29 @@ export default function MyBookingsPage() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
+        const useMock = process.env.NEXT_PUBLIC_USE_MOCK === "true";
+
         const token = localStorage.getItem("token");
-        if (!token) {
+
+        if (!token && !useMock) {
           alert("Vui lòng đăng nhập để xem đơn hàng!");
           return;
         }
 
-        const res = await fetch("https://travel-booking-backend-production.up.railway.app/api/bookings/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        // ======= MOCK CASE =======
+        if (useMock) {
+          await new Promise((r) => setTimeout(r, 600)); // giả lập API
+          setBookings(bookingsMock);
+          return;
+        }
+
+        // ======= API THẬT =======
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/bookings/my`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const data = await res.json();
         if (res.ok) {
@@ -80,9 +96,11 @@ export default function MyBookingsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 via-purple-800 to-blue-900">
         <FaClock className="text-5xl mb-4 text-white animate-pulse" />
-        <p className="text-xl font-medium text-white">Bạn chưa có đơn hàng nào.</p>
+        <p className="text-xl font-medium text-white">
+          Bạn chưa có đơn hàng nào.
+        </p>
         <button
-          onClick={() => window.location.href = "/tours"}
+          onClick={() => (window.location.href = "/tours")}
           className="mt-6 px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
         >
           Khám phá tour
@@ -128,7 +146,9 @@ export default function MyBookingsPage() {
               exit={{ opacity: 0 }}
               className="text-center py-12 bg-white/10 backdrop-blur-md rounded-lg border border-white/20"
             >
-              <p className="text-lg text-white">Không có đơn hàng trong danh mục này.</p>
+              <p className="text-lg text-white">
+                Không có đơn hàng trong danh mục này.
+              </p>
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,7 +194,10 @@ export default function MyBookingsPage() {
                     </p>
                     <div className="flex justify-between items-center mt-4">
                       <p className="text-sm text-gray-300">
-                        Số khách: <span className="font-medium text-white">{booking.quantity}</span>
+                        Số khách:{" "}
+                        <span className="font-medium text-white">
+                          {booking.quantity}
+                        </span>
                       </p>
                       <p className="text-sm font-semibold text-white">
                         {booking.total_price.toLocaleString()} ₫

@@ -9,6 +9,9 @@ import TourCard from "@/app/components/ui/TourCard";
 import { ArrowDown } from "lucide-react";
 import { FaFilter } from "react-icons/fa";
 
+import { toursDomesticMock } from "@/app/mock/toursDomestic";
+import { locationsMock } from "@/app/mock/locations";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -42,66 +45,98 @@ export default function ToursByDestinationPage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
-  // Fetch tours theo destination
+  // ================================
+  // Fetch Tours by Destination
+  // ================================
+  const fetchTours = async () => {
+    try {
+      setLoading(true);
+
+      if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+        const mockData = toursDomesticMock.filter(
+          (tour) => Number(tour.Destination.id) === Number(destinationId)
+        );
+        setTours(mockData);
+        return;
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tours/destination/${destinationId}`
+      );
+      const data = await res.json();
+
+      const filtered = (data.data || []).filter(
+        (tour: Tour) =>
+          tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
+      );
+      setTours(filtered);
+    } catch (err) {
+      console.error("Lỗi fetch tours:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================================
+  // Fetch Locations
+  // ================================
+  const fetchLocations = async () => {
+    try {
+      if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+        setLocations(locationsMock);
+        return;
+      }
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`);
+      const data = await res.json();
+
+      if (data.success) setLocations(data.data);
+    } catch (err) {
+      console.error("Lỗi fetch locations:", err);
+    }
+  };
+
+  // Fetch on mount
   useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          `https://travel-booking-backend-production.up.railway.app/api/tours/destination/${destinationId}`
-        );
-        const data = await res.json();
-       const allTours = (data.data || []).filter(
-          (tour: Tour) =>
-            tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
-        );
-          setTours(allTours);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchLocations = async () => {
-      try {
-        const res = await fetch(`https://travel-booking-backend-production.up.railway.app/api/locations`);
-        const data = await res.json();
-        if (data.success) setLocations(data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     if (destinationId) {
-      fetchTours();
-      fetchLocations();
+      Promise.all([fetchTours(), fetchLocations()]);
     }
   }, [destinationId]);
 
+  // ================================
+  // FILTER + SORT
+  // ================================
   const filteredAndSortedTours = tours
     .filter((tour) => {
       const price = tour.salePrice ? Number(tour.salePrice) : Number(tour.price);
+
       if (selectedPriceRange) {
         if (price < selectedPriceRange.min || price > selectedPriceRange.max)
           return false;
       }
+
       if (selectedLocation && Number(tour.Location?.id) !== selectedLocation)
         return false;
+
       return true;
     })
     .sort((a, b) => {
       const priceA = Number(a.salePrice) || Number(a.price);
       const priceB = Number(b.salePrice) || Number(b.price);
+
       if (sortBy === "priceAsc") return priceA - priceB;
       if (sortBy === "priceDesc") return priceB - priceA;
       if (sortBy === "dateAsc")
         return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       if (sortBy === "dateDesc")
         return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+
       return 0;
     });
 
+  // ================================
+  // UI Loading + Empty
+  // ================================
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -116,6 +151,9 @@ export default function ToursByDestinationPage() {
       </div>
     );
 
+  // ================================
+  // UI Render
+  // ================================
   return (
     <div className="relative min-h-screen bg-gradient-to-r from-indigo-900 via-purple-800 to-blue-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -131,6 +169,7 @@ export default function ToursByDestinationPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar */}
+          {/* Copy từ trang danh mục — y chang */}
           <motion.aside
             className="lg:w-1/4 max-h-[538px] bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
             variants={containerVariants}
@@ -245,7 +284,7 @@ export default function ToursByDestinationPage() {
             </motion.button>
           </motion.aside>
 
-          {/* Tour Cards Grid */}
+          {/* Right Content - Tour Cards */}
           <main className="lg:w-3/4">
             <motion.div
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
