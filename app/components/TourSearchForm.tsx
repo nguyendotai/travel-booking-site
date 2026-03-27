@@ -22,7 +22,6 @@ export default function TourSearchForm() {
     if (filters.destination) query.append("destination", filters.destination);
     if (filters.date) query.append("date", filters.date);
 
-    // Điều hướng đến page search với query
     router.push(`/tours/search?${query.toString()}`);
   };
 
@@ -31,7 +30,6 @@ export default function TourSearchForm() {
       onSubmit={handleSubmit}
       className="flex items-stretch bg-white border-2 border-yellow-400 rounded-xl overflow-hidden w-full max-w-5xl mx-auto shadow-md"
     >
-      {/* Điểm đến */}
       <div className="flex items-center flex-1 px-4 py-3 border-r border-gray-200">
         <FaSearch className="text-gray-400 mr-2" />
         <div className="flex flex-col w-full">
@@ -47,7 +45,6 @@ export default function TourSearchForm() {
         </div>
       </div>
 
-      {/* Ngày */}
       <div className="flex items-center flex-1 px-4 py-3 border-r border-gray-200">
         <FaCalendarAlt className="text-gray-400 mr-2" />
         <div className="flex flex-col w-full">
@@ -62,7 +59,6 @@ export default function TourSearchForm() {
         </div>
       </div>
 
-      {/* Button */}
       <button
         type="submit"
         className="bg-blue-600 text-white px-8 font-medium hover:bg-blue-700 transition"

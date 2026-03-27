@@ -64,7 +64,7 @@ export default function TourDetailPage() {
     const fetchReviews = async (tourId: number) => {
       try {
         if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
-          setReviews([]); // mock có thể không có review
+          setReviews([]); 
         } else {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/tour/${tourId}`);
           const result = await res.json();

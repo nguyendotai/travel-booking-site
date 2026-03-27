@@ -45,9 +45,6 @@ export default function ToursByDestinationPage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
-  // ================================
-  // Fetch Tours by Destination
-  // ================================
   const fetchTours = async () => {
     try {
       setLoading(true);
@@ -77,9 +74,6 @@ export default function ToursByDestinationPage() {
     }
   };
 
-  // ================================
-  // Fetch Locations
-  // ================================
   const fetchLocations = async () => {
     try {
       if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
@@ -96,16 +90,12 @@ export default function ToursByDestinationPage() {
     }
   };
 
-  // Fetch on mount
   useEffect(() => {
     if (destinationId) {
       Promise.all([fetchTours(), fetchLocations()]);
     }
   }, [destinationId]);
 
-  // ================================
-  // FILTER + SORT
-  // ================================
   const filteredAndSortedTours = tours
     .filter((tour) => {
       const price = tour.salePrice ? Number(tour.salePrice) : Number(tour.price);
@@ -134,9 +124,6 @@ export default function ToursByDestinationPage() {
       return 0;
     });
 
-  // ================================
-  // UI Loading + Empty
-  // ================================
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -151,9 +138,6 @@ export default function ToursByDestinationPage() {
       </div>
     );
 
-  // ================================
-  // UI Render
-  // ================================
   return (
     <div className="relative min-h-screen bg-gradient-to-r from-indigo-900 via-purple-800 to-blue-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -169,7 +153,6 @@ export default function ToursByDestinationPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar */}
-          {/* Copy từ trang danh mục — y chang */}
           <motion.aside
             className="lg:w-1/4 max-h-[538px] bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sticky top-24 border border-gray-200"
             variants={containerVariants}

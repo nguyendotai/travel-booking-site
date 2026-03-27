@@ -42,7 +42,6 @@ export default function TourshotDealPage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
-  // Fetch tours theo destination
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -50,9 +49,6 @@ export default function TourshotDealPage() {
       try {
         const useMock = process.env.NEXT_PUBLIC_USE_MOCK === "true";
 
-        // --------------------
-        // 🟣 MOCK MODE
-        // --------------------
         if (useMock) {
           const mockTours = toursDomesticMock.filter(
             (t) =>
@@ -65,9 +61,6 @@ export default function TourshotDealPage() {
           return;
         }
 
-        // --------------------
-        // 🔵 API MODE
-        // --------------------
         const API = process.env.NEXT_PUBLIC_API_URL;
 
         const [toursRes, locationsRes] = await Promise.all([

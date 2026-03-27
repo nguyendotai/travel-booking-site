@@ -26,7 +26,7 @@ export default function Testimonials() {
       } catch (err) {
         console.error("Failed to fetch reviews:", err);
       } finally {
-        setLoading(false); // <<< QUAN TRỌNG
+        setLoading(false); 
       }
     };
 

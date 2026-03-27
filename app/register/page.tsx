@@ -25,14 +25,14 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    phone: "", // Thêm phone vào state
+    phone: "", 
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value.trim(), // Loại bỏ khoảng trắng
+      [name]: value.trim(),
     }));
   };
 
@@ -51,11 +51,11 @@ export default function Register() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: formData.username, // Đổi username thành name để khớp với backend
+          name: formData.username, 
           email: formData.email,
           password: formData.password,
           confirmPassword: formData.confirmPassword,
-          phone: formData.phone || "", // Gửi phone, để rỗng nếu không có
+          phone: formData.phone || "", 
         }),
       });
       const data = await res.json();

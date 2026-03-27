@@ -41,7 +41,6 @@ export default function ExplorePage() {
     "priceAsc" | "priceDesc" | "dateAsc" | "dateDesc"
   >("dateDesc");
 
-  // Fetch tours theo destination
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -49,9 +48,6 @@ export default function ExplorePage() {
       try {
         const useMock = process.env.NEXT_PUBLIC_USE_MOCK === "true";
 
-        // --------------------
-        // 🟣 MOCK MODE
-        // --------------------
         if (useMock) {
           const mockTours = toursDomesticMock.filter(
             (t) =>
@@ -64,9 +60,6 @@ export default function ExplorePage() {
           return;
         }
 
-        // --------------------
-        // 🔵 API MODE
-        // --------------------
         const API = process.env.NEXT_PUBLIC_API_URL;
 
         const [toursRes, locationsRes] = await Promise.all([

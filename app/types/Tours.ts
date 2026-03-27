@@ -47,6 +47,5 @@ export interface Tour {
   Location: Location;  
   Hotel: Hotel;
 
-  // 👇 Thêm dòng này
   tourDays: TourDay[];
 }

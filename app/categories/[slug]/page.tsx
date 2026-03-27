@@ -49,7 +49,6 @@ export default function ToursByCategoryPage() {
   const fetchTours = async (slug: string) => {
     try {
       if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
-        // Lọc đúng category theo slug
         const data = toursDomesticMock.filter(
           (t) => t.fixedCategory?.slug === slug
         );
@@ -63,7 +62,6 @@ export default function ToursByCategoryPage() {
         return;
       }
 
-      // Fetch API thật từ .env
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/tours/fixed-category/${slug}`
       );

@@ -25,10 +25,10 @@ export default function RootLayout({
             {isHome && <Banner />}
           </header>
 
-          {/* Main content chiếm toàn bộ phần còn lại */}
+          {/* Main content */}
           <main className="flex-1 mt-[72px]">{children}</main>
 
-          {/* Footer luôn dính sát dưới */}
+          {/* Footer  */}
           <footer className="mt-auto">
             <Footer />
           </footer>

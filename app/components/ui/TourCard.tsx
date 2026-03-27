@@ -23,7 +23,6 @@ interface TourCardProps {
 }
 
 const TourCard: React.FC<TourCardProps> = ({ tour }) => {
-  // Gắn màu cho trạng thái
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "ongoing":

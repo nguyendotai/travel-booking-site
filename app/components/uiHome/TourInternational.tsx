@@ -20,14 +20,11 @@ const TourInternational = () => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
       return (
         toursInternationalMock
-          // Lọc giống API: ví dụ chỉ lấy tour ongoing/upcoming
           .filter(
             (tour) =>
               tour.tourStatus === "ongoing" || tour.tourStatus === "upcoming"
           )
-          // Lọc theo category nếu cần (ví dụ du-lich-trong-nuoc)
           .filter((tour) => tour.fixedCategory.slug === "du-lich-quoc-te")
-          // Giới hạn số lượng nếu muốn
           .slice(0, MAX_TOURS)
       );
     } else {
@@ -119,7 +116,7 @@ const TourInternational = () => {
         </div>
       </div>
 
-      {/* Carousel - Slide ngang mượt như cũ */}
+      {/* Carousel - Slide */}
       <div className="max-w-[1500px] mx-auto px-6">
         <div className="overflow-hidden">
           <motion.div

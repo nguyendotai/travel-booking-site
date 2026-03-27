@@ -39,20 +39,17 @@ export default function SearchToursPage() {
 
   const [sortBy, setSortBy] = useState<"priceAsc" | "priceDesc" | "dateAsc" | "dateDesc">("dateDesc");
 
-  // Lấy search params từ URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setDestination(params.get("destination") || "");
     setDate(params.get("date") || "");
   }, []);
 
-  // Fetch tours + locations
   useEffect(() => {
     const fetchTours = async () => {
       try {
         setLoading(true);
 
-        // Nếu dùng mock
         if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
           const mockFiltered = toursDomesticMock.filter((tour) => {
             const matchDestination = destination
@@ -68,7 +65,6 @@ export default function SearchToursPage() {
           return;
         }
 
-        // Fetch API thật
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/tours/search?destination=${destination}&date=${date}`
         );
@@ -95,17 +91,14 @@ export default function SearchToursPage() {
     fetchLocations();
   }, [destination, date]);
 
-  // Lọc + Sort
   const filteredAndSortedTours = tours
     .filter((tour) => {
       const price = tour.salePrice ? Number(tour.salePrice) : Number(tour.price);
 
-      // Lọc theo giá
       if (selectedPriceRange) {
         if (price < selectedPriceRange.min || price > selectedPriceRange.max) return false;
       }
 
-      // Lọc theo địa điểm
       if (selectedLocation && Number(tour.Location?.id) !== selectedLocation) return false;
 
       return true;
@@ -122,7 +115,6 @@ export default function SearchToursPage() {
       return 0;
     });
 
-  // UI Loading
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -130,7 +122,6 @@ export default function SearchToursPage() {
       </div>
     );
 
-  // Không có tour
   if (!tours.length)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">

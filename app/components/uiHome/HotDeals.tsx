@@ -52,9 +52,7 @@ const HotDeals = () => {
       loadTours();
     }, []);
 
-  // Kiểm tra đã click "Khám phá thêm" chưa
   useEffect(() => {
-    // Nếu người dùng đã thấy nút rồi thì ẩn luôn (không animate nữa)
     const seen = localStorage.getItem("hasSeenHotDealsButton");
     if (seen === "true") {
       setHasClickedExplore(true);
@@ -193,8 +191,7 @@ const HotDeals = () => {
           </>
         )}
       </div>
-
-      {/* Nút Khám phá thêm - Chỉ click 1 lần */}
+      
       {tours.length > 0 && (
         <motion.div
           className="text-center mt-12 relative z-10"

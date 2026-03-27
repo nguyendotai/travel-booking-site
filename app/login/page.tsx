@@ -32,12 +32,11 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Giả lập API call để đăng nhập
     dispatch(login(formData));
   };
 
   if (token) {
-    window.location.href = "/"; // chuyển hướng sau login
+    window.location.href = "/"; 
   }
 
   return (

@@ -5,25 +5,22 @@ import Image from "next/image";
 import { Users, MapPin, Award, Calendar, ArrowRight } from "lucide-react";
 import { JSX } from "react";
 
-// Định nghĩa interface cho dữ liệu value
 interface ValueItem {
   icon: JSX.Element;
   title: string;
   description: string;
 }
 
-// Định nghĩa interface cho dữ liệu stat
 interface StatItem {
   value: string;
   label: string;
 }
 
-// Variants cho animation với transition type hợp lệ
 const sectionVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.5, ease: easeOut } as Transition, // Explicitly cast to Transition
+    transition: { duration: 0.5, ease: easeOut } as Transition,
   },
 };
 
@@ -32,7 +29,7 @@ const contentVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: easeOut } as Transition, // Explicitly cast to Transition
+    transition: { duration: 0.8, ease: easeOut } as Transition, 
   },
 };
 
@@ -41,7 +38,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.5, ease: easeOut } as Transition, // Explicitly cast to Transition
+    transition: { duration: 0.5, ease: easeOut } as Transition,
   },
 };
 

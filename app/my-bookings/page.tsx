@@ -46,14 +46,12 @@ export default function MyBookingsPage() {
           return;
         }
 
-        // ======= MOCK CASE =======
         if (useMock) {
-          await new Promise((r) => setTimeout(r, 600)); // giả lập API
+          await new Promise((r) => setTimeout(r, 600)); 
           setBookings(bookingsMock);
           return;
         }
 
-        // ======= API THẬT =======
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/bookings/my`,
           {
@@ -77,7 +75,6 @@ export default function MyBookingsPage() {
     fetchBookings();
   }, []);
 
-  // Lọc đơn hàng theo tab
   const filteredBookings =
     activeTab === "all"
       ? bookings

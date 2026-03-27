@@ -16,7 +16,6 @@ export default function PaymentPage() {
       });
       const data = await res.json();
 
-      // tìm booking theo id
       const booking = data.data.find((b: any) => b.id == bookingId);
       if (booking) {
         setPayment(booking.Payment);
