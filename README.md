@@ -206,11 +206,9 @@ NEXT_PUBLIC_USE_MOCK=false
 
 ## 📸 Demo & Link dự án
 
-* Frontend repo: *(điền link GitHub frontend)*
-* Backend repo: *(điền link GitHub backend)*
-* Website: *(điền link deploy nếu có)*
-* Admin panel: *(điền link nếu có)*
-
+* Frontend repo: [*(GitHub frontend)*](https://github.com/nguyendotai/travel-booking-site)
+* Backend repo: [*(GitHub backend)*](https://github.com/nguyendotai/travel-booking-admin)
+* Website: [*(link deploy )*](https://travel-booking-site-3fra410j3-nguyendotais-projects.vercel.app/)
 ---
 
 ## 👤 Tác giả
@@ -218,8 +216,8 @@ NEXT_PUBLIC_USE_MOCK=false
 **Tai Nguyen**
 Frontend Developer Intern
 
-* GitHub: *(link github)*
-* Portfolio: *(link portfolio)*
+* GitHub: [*(link github)*](https://github.com/nguyendotai)
+* Portfolio: [*(link portfolio)*](https://portfolio-xi-nine-jwe6t3zoza.vercel.app/)
 
 ---
 
