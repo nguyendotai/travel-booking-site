@@ -214,7 +214,7 @@ NEXT_PUBLIC_USE_MOCK=false
 ## 👤 Tác giả
 
 **Tai Nguyen**
-Frontend Developer Intern
+Frontend Developer
 
 * GitHub: [*(link github)*](https://github.com/nguyendotai)
 * Portfolio: [*(link portfolio)*](https://portfolio-xi-nine-jwe6t3zoza.vercel.app/)
